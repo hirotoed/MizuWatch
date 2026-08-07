@@ -1,1 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Map with Temperature Color Markers (Two Drones)</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Google Maps API (APIキーは適宜置き換え) -->
+    <script src="https://maps.google.com/maps/api/js?key=キーを入力"></script>
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+    <!-- 初期画面 -->
+    <div id="initial-screen">
+        <h1>水上ドローンデータ管理</h1>
+        <button id="drone-button">一台目表示</button>
+        <button id="drone-button2">二台目表示</button>
+        <button id="drone-button3">両方の表示</button>
+        <div id="settings-icon">⚙️</div>
+    </div>
+
+    <!-- 設定画面 -->
+    <div id="settings-screen">
+        <div id="settings-content">
+            <div id="settings-menu">
+                <button id="add-drone-button">ドローンの追加</button>
+                <!-- Googleログイン等、必要ならここにボタン等を追加 -->
+                <button id="exit-button">閉じる</button>
+            </div>
+            <div id="settings-details"></div>
+        </div>
+    </div>
+
+    <!-- ポップアップ（URL入力用） -->
+    <div id="popup"></div>
+
+    <!-- 一台目用の画面 -->
+    <div id="confirmation-screen">
+        <h3>一台目の水上ロガーデータ表示とマッピング</h3>
+        <div id="map"></div>
+        <div id="loading" class="loading">データを読み取り中...</div>
+        <div id="table-container3" class="table-container">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Tmp</th>
+                        <th>Hum</th>
+                        <th>Prs</th>
+                        <th>WaterTemp</th>
+                        <th>Lat</th>
+                        <th>Lng</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="toggle-button" class="toggle-button">▼</button>
+            <button id="now-button" class="now-button">現在地を表示</button>
+        </div>
+    </div>
+
+    <!-- 二台目用の画面 -->
+    <div id="confirmation-screen2">
+        <h3>二台目の水上ロガーデータ表示とマッピング</h3>
+        <div id="map2"></div>
+        <div id="loading2" class="loading">データを読み取り中...</div>
+        <div id="table-container2" class="table-container">
+            <table id="data-table2">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Tmp</th>
+                        <th>Hum</th>
+                        <th>Prs</th>
+                        <th>Wtmp</th>
+                        <th>Lat</th>
+                        <th>Lng</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="toggle-button2" class="toggle-button">▼</button>
+            <button id="now-button2" class="now-button">現在地を表示</button>
+        </div>
+    </div>
+    <!-- 両方用の画面 -->
+    <div id="confirmation-screen3">
+        <h3>両方の水上ロガーデータ表示とマッピング</h3>
+        <div id="map3"></div>
+        <button id="now-button3" class="now^button3">現在地を表示</button>
+        <!-- <div id="loading3" class="loading">データを読み取り中...</div>
+        <div id="table-container3" class="table-container3">
+            <table id="data-table3">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Tmp</th>
+                        <th>Hum</th>
+                        <th>Prs</th>
+                        <th>Wtmp</th>
+                        <th>Lat</th>
+                        <th>Lng</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="toggle-button3" class="toggle-button">▼</button>
+            <button id="now-button3" class="now-button">現在地を表示</button>
+        </div> -->
+        <!-- <div id="table-container2" class="table-container">
+            <table id="data-table2">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Tmp</th>
+                        <th>Hum</th>
+                        <th>Prs</th>
+                        <th>Wtmp</th>
+                        <th>Lat</th>
+                        <th>Lng</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="toggle-button2" class="toggle-button">▼</button>
+            <button id="now-button2" class="now-button">現在地を表示</button>
+        </div> -->
+    </div>
+</body>
+
+</html>
 
