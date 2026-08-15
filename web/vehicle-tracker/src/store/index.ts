@@ -53,6 +53,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     isConnected: false,
     lastUpdate: null,
     retryCount: 0,
+    sourceLabel: 'Mock data',
   },
   mapCenter: null,
   mapZoom: 12,

@@ -1,0 +1,38 @@
+name: Supabase backend CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Test database migration and RLS
+        run: supabase test db
+
+      - name: Check Edge Functions
+        run: deno check supabase/functions/device-telemetry-v1/index.ts supabase/functions/tracks-v1/index.ts
+
+      - name: Test Edge Function validation
+        run: deno test --allow-env supabase/functions/_shared/validation_test.ts
+

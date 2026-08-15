@@ -46,3 +46,17 @@
   "water_temperature": 24.8,
   "battery_voltage": 3.9
 }
+```
+
+正式APIのwire形式はcamelCase、DB列はsnake_caseとし、項目、検証範囲、
+取得レスポンスとの対応は [`API_DATABASE_AUTH.md`](API_DATABASE_AUTH.md) を
+正本とする。上記JSONは初期検討時の参考例であり、正式な送信形式ではない。
+
+## 正式バックエンド
+
+- API: Supabase Edge Functions（TypeScript）
+- DB: Supabase PostgreSQL
+- Web認証: Supabase Auth（招待制メール + パスワード）
+- 観測機認証: 機体ごとの256 bit token
+- 重複防止: UUID v7 `messageId` とDB一意制約
+- リージョン: Tokyo (`ap-northeast-1`)

@@ -41,11 +41,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
         env:
           VITE_GMAPS_API_KEY: ${{ secrets.VITE_GMAPS_API_KEY }}
-          VITE_GAS_ENDPOINT: ${{ secrets.VITE_GAS_ENDPOINT }}
+          VITE_VEHICLE_DATA_SOURCE: ${{ vars.VITE_VEHICLE_DATA_SOURCE || 'mock' }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
 
       - name: Setup Pages
         if: github.event_name == 'push'
