@@ -82,6 +82,7 @@ select throws_ok(
     )
   $$,
   '23514',
+  null,
   'database rejects an out-of-range telemetry value'
 );
 
