@@ -29,3 +29,19 @@ MizuWatchは、河川・湖・ため池などの水域を低コストで観測�
 - `hardware`：回路図、PCB、部品表
 - `web`：観測データ表示システム
 - `docs`：仕様書、試験計画、開発記録
+
+## Web観測アプリ
+
+複数機体の位置・軌跡・センサーデータを表示するReactアプリは
+`web/vehicle-tracker` にあります。
+
+```powershell
+cd web/vehicle-tracker
+npm install
+Copy-Item .env.example .env
+npm run dev
+```
+
+Google Apps Scriptバックエンドと旧データの移行手順は
+`server/google-apps-script` にあります。APIキーやGAS URLは `.env` と
+Apps ScriptのScript Propertiesで管理し、Gitにはコミットしません。
