@@ -12,6 +12,18 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
+function isOptionalNumberInRange(
+  value: unknown,
+  min: number,
+  max: number,
+): boolean {
+  return value === undefined || (isFiniteNumber(value) && value >= min && value <= max);
+}
+
+function isOptionalTimestamp(value: unknown): boolean {
+  return value === undefined || (typeof value === 'string' && !Number.isNaN(Date.parse(value)));
+}
+
 function isTelemetryDataPoint(value: unknown, vehicleId: string): value is TelemetryDataPoint {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const point = value as Record<string, unknown>;
@@ -28,7 +40,32 @@ function isTelemetryDataPoint(value: unknown, vehicleId: string): value is Telem
     isFiniteNumber(point.airTemperature) &&
     (point.altitude === undefined || isFiniteNumber(point.altitude)) &&
     (point.satellites === undefined || (isFiniteNumber(point.satellites) && Number.isInteger(point.satellites))) &&
-    (point.humidity === undefined || isFiniteNumber(point.humidity))
+    isOptionalTimestamp(point.gnssTimestamp) &&
+    (point.fixStatus === undefined || point.fixStatus === 'valid' || point.fixStatus === 'no_fix') &&
+    isOptionalNumberInRange(point.hdop, 0, 99.99) &&
+    isOptionalNumberInRange(point.ph, 0, 14) &&
+    isOptionalNumberInRange(point.ec, 1, 2000) &&
+    (point.humidity === undefined || isFiniteNumber(point.humidity)) &&
+    isOptionalNumberInRange(point.batteryVoltage, 0, 20) &&
+    (
+      point.communicationStatus === undefined ||
+      point.communicationStatus === 'online' ||
+      point.communicationStatus === 'buffered' ||
+      point.communicationStatus === 'unknown'
+    ) &&
+    (
+      point.measurementStatus === undefined ||
+      point.measurementStatus === 'ok' ||
+      point.measurementStatus === 'stabilizing' ||
+      point.measurementStatus === 'partial' ||
+      point.measurementStatus === 'sensor_error'
+    ) &&
+    (
+      point.qualityFlag === undefined ||
+      point.qualityFlag === 'A' ||
+      point.qualityFlag === 'B' ||
+      point.qualityFlag === 'C'
+    )
   );
 }
 
@@ -87,4 +124,3 @@ export const supabaseVehicleDataSource: VehicleDataSource = {
     }
   },
 };
-

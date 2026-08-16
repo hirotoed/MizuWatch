@@ -20,14 +20,23 @@ interface TelemetryRow {
   id: number;
   device_id: string;
   observed_at: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   altitude: number | null;
   satellites: number | null;
+  gnss_timestamp: string | null;
+  fix_status: "valid" | "no_fix" | null;
+  hdop: number | null;
   water_temperature: number;
+  ph: number | null;
+  ec: number | null;
   air_pressure: number;
   air_temperature: number;
   humidity: number | null;
+  battery_voltage: number | null;
+  communication_status: "online" | "buffered" | "unknown" | null;
+  measurement_status: "ok" | "stabilizing" | "partial" | "sensor_error" | null;
+  quality_flag: "A" | "B" | "C" | null;
 }
 
 function publicConfiguration(): { url: string; publishableKey: string } {
@@ -188,7 +197,7 @@ Deno.serve(async (request) => {
       const { data, error } = await supabase
         .from("telemetry_readings")
         .select(
-          "id, device_id, observed_at, latitude, longitude, altitude, satellites, water_temperature, air_pressure, air_temperature, humidity",
+          "id, device_id, observed_at, latitude, longitude, altitude, satellites, gnss_timestamp, fix_status, hdop, water_temperature, ph, ec, air_pressure, air_temperature, humidity, battery_voltage, communication_status, measurement_status, quality_flag",
         )
         .in("device_id", devices.map((device) => device.id))
         .gte("observed_at", from.toISOString())
@@ -214,6 +223,11 @@ Deno.serve(async (request) => {
     for (const row of rows) {
       const vehicleCode = codeByDeviceId.get(row.device_id);
       if (!vehicleCode) continue;
+
+      // /tracks is map-oriented. Rows recorded while GNSS had no valid fix stay in
+      // the database but are intentionally omitted from this response.
+      if (row.latitude === null || row.longitude === null) continue;
+
       tracks[vehicleCode].push({
         timestamp: new Date(row.observed_at).toISOString(),
         vehicleId: vehicleCode,
@@ -221,10 +235,27 @@ Deno.serve(async (request) => {
         longitude: row.longitude,
         ...(row.altitude === null ? {} : { altitude: row.altitude }),
         ...(row.satellites === null ? {} : { satellites: row.satellites }),
+        ...(row.gnss_timestamp === null
+          ? {}
+          : { gnssTimestamp: new Date(row.gnss_timestamp).toISOString() }),
+        ...(row.fix_status === null ? {} : { fixStatus: row.fix_status }),
+        ...(row.hdop === null ? {} : { hdop: row.hdop }),
         waterTemperature: row.water_temperature,
+        ...(row.ph === null ? {} : { ph: row.ph }),
+        ...(row.ec === null ? {} : { ec: row.ec }),
         airPressure: row.air_pressure,
         airTemperature: row.air_temperature,
         ...(row.humidity === null ? {} : { humidity: row.humidity }),
+        ...(row.battery_voltage === null
+          ? {}
+          : { batteryVoltage: row.battery_voltage }),
+        ...(row.communication_status === null
+          ? {}
+          : { communicationStatus: row.communication_status }),
+        ...(row.measurement_status === null
+          ? {}
+          : { measurementStatus: row.measurement_status }),
+        ...(row.quality_flag === null ? {} : { qualityFlag: row.quality_flag }),
       });
     }
 
