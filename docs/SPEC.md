@@ -36,7 +36,7 @@ DO・濁度は v1.1 以降の追加候補とする。
 基本データフロー:
 
 ```text
-センサー / GPS
+センサー / GNSS
     ↓
 Raspberry Pi Pico W
     ↓
@@ -63,15 +63,15 @@ Web ダッシュボード
 
 ## 5. v1 センサー構成
 
-| 測定項目 | センサー候補 | 接続 | 状態 |
+| 測定項目 | センサー / モジュール | 接続 | 状態 |
 |---|---|---|---|
 | 水温 | DS18B20 | 1-Wire | 採用方向 |
 | pH | DFRobot SEN0169-V2 | Analog | 第一候補 |
 | EC | DFRobot SEN0706 (K=1) | RS485 / Modbus RTU | 第一候補 |
-| 位置 | GPS モジュール | 未定 | 要選定 |
+| 位置・時刻 | Waveshare L76K Multi-GNSS Module | UART 9600 bps | **確定** |
 | 気温・湿度・気圧 | BME280 | I2C | 補助データ用 |
 
-センサー候補は比較試験の結果によって変更する可能性がある。
+水温・pH・EC センサー候補は比較試験の結果によって変更する可能性がある。GNSS は、前身試作で使用実績のある L76K Multi-GNSS Module を v1 の採用モジュールとして確定する。
 
 ## 6. 測定要求仕様
 
@@ -146,17 +146,49 @@ SEN0706 を使用する場合、初期方針は以下とする。
 
 EC の利用可能範囲はカタログ値だけで決めず、実測した Bias・MAE・RMSE 等から決定する。
 
+### 6.4 GNSS
+
+v1 の GNSS は **Waveshare L76K Multi-GNSS Module** を採用する。
+
+| 項目 | v1 仕様 |
+|---|---|
+| モジュール | Waveshare L76K Multi-GNSS Module |
+| 対応衛星系 | GPS / GLONASS / BeiDou (BDS) / QZSS |
+| インターフェース | UART |
+| UART ボーレート | 9600 bps（標準設定） |
+| 位置更新周期 | 1 Hz（標準設定） |
+| メーカー公称位置精度 | 2.0 m CEP |
+| データ形式 | NMEA 0183 |
+| 状態 | **v1 採用確定** |
+
+L76K は前身試作で Pico W + TinyGPS++ による位置取得実績があり、既存ファームウェアとの互換性を優先して継続採用する。
+
+少なくとも以下の GNSS データを保存対象とする。
+
+```text
+latitude
+longitude
+altitude
+satellite_count
+gnss_timestamp
+fix_status
+hdop  # NMEAから取得できる場合
+```
+
+位置精度は公称値のみで保証せず、実機で静止時の位置ばらつき・移動時の軌跡・測位開始時間・LTE-M 動作時の干渉を確認する。
+
 ## 7. データ取得・保存周期
 
 ### 基本方針
 
 - センサー取得: **1 Hz（1 秒周期）**
+- GNSS 位置取得: **1 Hz**
 - SD カード保存: **1 Hz**
 - サーバー送信: **10 秒周期を初期値**
 - Web 更新: **10 秒周期を初期値**
 
 ```text
-センサー
+センサー / GNSS
   ↓ 1 秒
 生データ取得
   ↓
@@ -182,6 +214,10 @@ device_id
 timestamp
 latitude
 longitude
+altitude
+satellite_count
+fix_status
+hdop
 
 water_temperature
 ph
@@ -192,7 +228,6 @@ humidity
 pressure
 
 battery_voltage
-GPS quality / accuracy
 communication_status
 
 sensor_id
@@ -287,7 +322,6 @@ SEN0706 を採用する場合、Pico W の 3.3 V 系とは別にセンサー用�
 
 ## 14. 現時点の未決定事項
 
-- GPS モジュール
 - pH センサー SEN0169-V2 の最終採用
 - EC センサー SEN0706 の最終採用
 - LTE-M モジュール / SIM
