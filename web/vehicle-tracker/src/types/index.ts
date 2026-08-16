@@ -14,11 +14,6 @@ export interface TelemetryRow {
   };
 }
 
-export interface VehicleData {
-  vehicleId: string;
-  data: TelemetryDataPoint[];
-}
-
 export interface TelemetryDataPoint {
   timestamp: string;
   vehicleId: string;
@@ -34,16 +29,11 @@ export interface TelemetryDataPoint {
 
 export type VehicleTracks = Record<string, TelemetryDataPoint[]>;
 
-export type GASResponse<T extends object = Record<string, never>> = {
-  status: 'success' | 'error';
-  message?: string;
-  timestamp: string;
-} & T;
-
 export interface ConnectionStatus {
   isConnected: boolean;
   lastUpdate: Date | null;
   retryCount: number;
+  sourceLabel: string;
 }
 
 export interface MapOptions {

@@ -1,0 +1,8 @@
+project_id = "mizuwatch"
+
+[functions.device-telemetry-v1]
+verify_jwt = false
+
+[functions.tracks-v1]
+verify_jwt = true
+

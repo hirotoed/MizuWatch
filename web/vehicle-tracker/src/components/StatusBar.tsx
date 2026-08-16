@@ -71,8 +71,8 @@ export const StatusBar: React.FC = () => {
 
   const getConnectionStatusText = () => {
     if (isPaused) return 'Paused';
-    if (connectionStatus.isConnected) return 'Connected';
-    return 'Disconnected';
+    if (connectionStatus.isConnected) return `${connectionStatus.sourceLabel} ready`;
+    return 'Data unavailable';
   };
 
   const getConnectionIcon = () => {

@@ -47,8 +47,9 @@ module.exports = (env, argv) => {
         'import.meta.env': JSON.stringify({
           MODE: isProduction ? 'production' : 'development',
           VITE_GMAPS_API_KEY: process.env.VITE_GMAPS_API_KEY,
-          VITE_GAS_ENDPOINT: process.env.VITE_GAS_ENDPOINT,
-          VITE_LEGACY_GAS_ENDPOINTS: process.env.VITE_LEGACY_GAS_ENDPOINTS,
+          VITE_VEHICLE_DATA_SOURCE: process.env.VITE_VEHICLE_DATA_SOURCE || 'mock',
+          VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL,
+          VITE_SUPABASE_PUBLISHABLE_KEY: process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         }),
       }),
       ...(isProduction ? [new MiniCssExtractPlugin({

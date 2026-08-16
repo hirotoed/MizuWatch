@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import { getAllVehicles, GASApiError } from '../api/gas';
+import { DataSourceError, vehicleDataSource } from '../data';
 import { useAppStore } from '../store';
 import type { VehicleTracks } from '../types';
 import { useEffect } from 'react';
@@ -15,7 +15,7 @@ export function useVehicleData() {
 
   const { data, error, isLoading, mutate } = useSWR<VehicleTracks>(
     isPaused ? null : 'vehicle-data',
-    getAllVehicles,
+    () => vehicleDataSource.getAllVehicles(),
     {
       refreshInterval: refreshInterval * 1000,
       revalidateOnFocus: true,
@@ -26,9 +26,10 @@ export function useVehicleData() {
           isConnected: true,
           lastUpdate: new Date(),
           retryCount: 0,
+          sourceLabel: vehicleDataSource.label,
         });
       },
-      onError: (error: GASApiError) => {
+      onError: (error: DataSourceError) => {
         console.error('Failed to fetch vehicle data:', error);
         setConnectionStatus({
           isConnected: false,

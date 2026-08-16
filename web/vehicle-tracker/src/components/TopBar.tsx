@@ -34,7 +34,7 @@ export const TopBar: React.FC = () => {
               connectionStatus.isConnected ? 'bg-green-500' : 'bg-red-500'
             }`} />
             <span className="text-sm text-dark-muted">
-              {connectionStatus.isConnected ? 'Connected' : 'Disconnected'}
+              {connectionStatus.isConnected ? connectionStatus.sourceLabel : 'Data unavailable'}
             </span>
           </div>
         </div>

@@ -26,21 +26,19 @@ APIサーバー
 Web管理画面
 ```
 
-## ディレクトリ構成
+## 正式バックエンド
 
-```text
-server/
-├── README.md
-├── api/
-│   └── receive_data.py
-├── database/
-│   └── schema.sql
-└── config/
-```
+正式APIはSupabase Edge Functions（TypeScript）、データベースはSupabase
+PostgreSQL、Web利用者認証はSupabase Authを使用します。観測機は機体ごとの
+tokenで認証します。API、schema、RLS、重複防止の正本は
+[`../docs/API_DATABASE_AUTH.md`](../docs/API_DATABASE_AUTH.md) です。
+
+`google-apps-script` は過去の検証用資産であり、本番バックエンドには使用しません。
 
 ## API
 
-観測機から以下のようなJSONデータを受信することを想定しています。
+観測機は正式なバッチ受信APIへ送信します。以下は過去の単一行形式の参考例で、
+正式なwire形式ではありません。
 
 ```json
 {
@@ -56,16 +54,15 @@ server/
 }
 ```
 
-## 今後実装する機能
+## 実装済みの正式経路
 
-* データ受信API
-* デバイス認証
-* データベース保存
-* データ取得API
-* 未送信データの重複防止
-* 異常値チェック
-* Web管理画面との連携
-* 機械学習処理との連携
+* `../supabase/migrations`: SQL schema、制約、index、RLS policy
+* `../supabase/functions/device-telemetry-v1`: 観測機tokenを検証する受信Edge Function
+* `../supabase/functions/tracks-v1`: Web利用者JWTとRLSを使う取得Edge Function
+* `(device_id, message_id)` 一意制約とトランザクションRPCによる再送の重複防止
+* `../web/vehicle-tracker/src/data/supabaseVehicleDataSource.ts`: 正式 `VehicleDataSource`
+
+導入、secret、テスト、deploy手順は [`../supabase/README.md`](../supabase/README.md) を参照してください。
 
 ## セキュリティ
 

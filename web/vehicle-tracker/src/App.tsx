@@ -86,7 +86,7 @@ function App() {
                 {error.message || 'Unknown error occurred'}
               </div>
               <div className="text-dark-muted text-xs">
-                Please check your .env configuration and GAS endpoint.
+                The configured vehicle data source could not provide vehicle data.
               </div>
             </div>
           </div>
