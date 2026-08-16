@@ -2,7 +2,7 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 set local search_path = extensions, public;
-select plan(21);
+select plan(29);
 
 select has_table('public', 'devices', 'devices table exists');
 select has_table('public', 'telemetry_readings', 'telemetry_readings table exists');
@@ -15,6 +15,15 @@ select col_is_pk('public', 'telemetry_readings', 'id', 'telemetry has an identit
 select col_is_pk('public', 'user_device_access', array['user_id', 'device_id'], 'access rows use a composite primary key');
 select has_index('public', 'telemetry_readings', 'telemetry_device_observed_idx', 'track lookup index exists');
 select col_is_unique('public', 'telemetry_readings', array['device_id', 'message_id'], 'device/message idempotency constraint exists');
+
+select has_column('public', 'telemetry_readings', 'ph', 'telemetry stores pH');
+select has_column('public', 'telemetry_readings', 'ec', 'telemetry stores EC');
+select has_column('public', 'telemetry_readings', 'gnss_timestamp', 'telemetry stores GNSS timestamp');
+select has_column('public', 'telemetry_readings', 'fix_status', 'telemetry stores GNSS fix status');
+select has_column('public', 'telemetry_readings', 'hdop', 'telemetry stores HDOP');
+select has_column('public', 'telemetry_readings', 'communication_status', 'telemetry stores communication status');
+select has_column('public', 'telemetry_readings', 'measurement_status', 'telemetry stores measurement status');
+select has_column('public', 'telemetry_readings', 'quality_flag', 'telemetry stores server quality flag');
 
 select ok((select relrowsecurity from pg_class where oid = 'public.devices'::regclass), 'devices RLS is enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.telemetry_readings'::regclass), 'telemetry RLS is enabled');
@@ -37,13 +46,25 @@ select is(
       'observed_at', clock_timestamp(),
       'latitude', 33,
       'longitude', 130,
+      'satellites', 10,
+      'gnss_timestamp', clock_timestamp(),
+      'fix_status', 'valid',
+      'hdop', 0.9,
       'water_temperature', 24.8,
+      'ph', 7.12,
+      'ec', 326.4,
       'air_pressure', 1012.4,
-      'air_temperature', 28.4
+      'air_temperature', 28.4,
+      'communication_status', 'online',
+      'ph_sensor_id', 'sen0169v2-01',
+      'ec_sensor_id', 'sen0706-01',
+      'ph_calibration_id', 'ph-cal-20260816-01',
+      'ec_calibration_id', 'ec-cal-20260816-01',
+      'measurement_status', 'ok'
     ))
   )->>'accepted',
   '1',
-  'first ingestion accepts a new reading'
+  'first ingestion accepts a new v1 reading'
 );
 
 select is(

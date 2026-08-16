@@ -6,11 +6,17 @@ export interface TelemetryRow {
     longitude: number;
     altitude: number;
     satellites: number;
+    gnss_timestamp?: string;
+    fix_status?: 'valid' | 'no_fix';
+    hdop?: number;
   };
   sensors: {
     water_temperature: number;
+    ph?: number;
+    ec?: number;
     air_pressure: number;
     air_temperature: number;
+    humidity?: number;
   };
 }
 
@@ -21,10 +27,19 @@ export interface TelemetryDataPoint {
   longitude: number;
   altitude?: number;
   satellites?: number;
+  gnssTimestamp?: string;
+  fixStatus?: 'valid' | 'no_fix';
+  hdop?: number;
   waterTemperature: number;
+  ph?: number;
+  ec?: number;
   airPressure: number;
   airTemperature: number;
   humidity?: number;
+  batteryVoltage?: number;
+  communicationStatus?: 'online' | 'buffered' | 'unknown';
+  measurementStatus?: 'ok' | 'stabilizing' | 'partial' | 'sensor_error';
+  qualityFlag?: 'A' | 'B' | 'C';
 }
 
 export type VehicleTracks = Record<string, TelemetryDataPoint[]>;
